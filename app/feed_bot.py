@@ -2,7 +2,6 @@ import os
 from datetime import datetime
 
 import feedparser
-import requests
 import yaml
 from bs4 import BeautifulSoup
 from github import Github
@@ -10,7 +9,7 @@ from github import Github
 
 class feed_bot:
     def __init__(self):
-        feed_file = os.path.join("app", os.environ.get("FEED_FILE", "feeds.yaml"))
+        feed_file = os.path.join("app", os.environ.get("FEED_FILE", "feeds.yml"))
         try:
             with open(feed_file, "r") as file:
                 self.configs = yaml.safe_load(file)
@@ -41,15 +40,14 @@ class feed_bot:
         feed_list = self.configs.get("feeds")
         for feed in feed_list:
             try:
-                feed_text = requests.get(feed).text
-                feed_data = feedparser.parse(feed_text)
+                feed_data = feedparser.parse(feed)
             except Exception as e:
                 print(f"Error in parsing feed {feed}: {e}")
                 continue
+            folder = feed_data.feed.title.replace(" ", "_").lower()
             for entry in feed_data.entries:
-                file_path = (
-                    f"{self.feed_bot_path}/{feed_data.feed.title}/{entry.title}.md"
-                )
+                sub_folder = entry.link.split("/")[-1] or entry.link.split("/")[-2]
+                file_path = f"{self.feed_bot_path}/{folder}/{sub_folder}.md"
 
                 if file_path in self.existing_files:
                     continue
@@ -57,7 +55,16 @@ class feed_bot:
                 medias = "\n".join(
                     [f"  - {media}" for media in self.configs.get("media")]
                 )
-                summary = BeautifulSoup(entry.summary, "html.parser").get_text()
+
+                summary = BeautifulSoup(entry.summary, "html.parser")
+                if entry.summary == entry.content[0].value:
+                    print(f"Entry {entry.title} has no summary")
+                    try:
+                        summary = summary.find("p")
+                    except:
+                        summary = ""
+
+                summary = summary.get_text(strip=True).replace("\n", " ")
                 md_content = f"---\nmedia:\n{medias}\n---\n{entry.title}\n{summary}\n\nRead more: {entry.link}\n"
 
                 self.repo.create_file(
