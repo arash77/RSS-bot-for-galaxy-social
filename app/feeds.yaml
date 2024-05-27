@@ -1,0 +1,8 @@
+feeds:
+  - https://galaxyproject.org/eu/feed.atom
+  
+media:
+  - bluesky
+  - mastodon
+  - matrix
+  - slack
