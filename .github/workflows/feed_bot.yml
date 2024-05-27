@@ -1,11 +1,11 @@
-name: Publish Content
+name: Create pr for feeds
 
 on:
-  pull_request_target:
-    branches: [main]
+  schedule:
+    - cron:  '00 00 * * *'
 
 jobs:
-  publish:
+  feed-bot:
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -24,8 +24,8 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install -r requirements.txt
 
-      - name: Run script to publish contents
+      - name: Run python script
         env:
-          FEED_FILE: "feed.tml"
+          FEED_FILE: "feeds.yml"
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: python -u app/feed_bot.py
