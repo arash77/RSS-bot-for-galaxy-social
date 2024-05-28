@@ -56,6 +56,9 @@ class feed_bot:
                 continue
             folder = feed_data.feed.title.replace(" ", "_").lower()
             for entry in feed_data.entries:
+                sub_folder = entry.link.split("/")[-1] or entry.link.split("/")[-2]
+                file_path = f"{self.feed_bot_path}/{folder}/{sub_folder}.md"
+
                 if file_path in self.existing_files:
                     print(f"File {file_path} already exists")
                     continue
@@ -63,9 +66,6 @@ class feed_bot:
                 if entry.link is None:
                     print(f"No link found for entry {entry.title}")
                     continue
-
-                sub_folder = entry.link.split("/")[-1] or entry.link.split("/")[-2]
-                file_path = f"{self.feed_bot_path}/{folder}/{sub_folder}.md"
 
                 md_config = yaml.dump(
                     {
