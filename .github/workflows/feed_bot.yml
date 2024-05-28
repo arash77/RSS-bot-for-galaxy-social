@@ -2,7 +2,9 @@ name: Create pr for feeds
 
 on:
   schedule:
-    - cron:  '00 00 * * *'
+    - cron: "00 00 * * *"
+
+  workflow_dispatch:
 
 jobs:
   feed-bot:
@@ -17,7 +19,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.10'
+          python-version: "3.10"
 
       - name: Install dependencies
         run: |
