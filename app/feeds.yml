@@ -1,8 +1,22 @@
 feeds:
-  - https://galaxyproject.org/eu/feed.atom
-  
-media:
-  - bluesky
-  - mastodon
-  - matrix
-  - slack
+  - url: https://galaxyproject.org/eu/feed.atom
+
+    format: "{summary}\n\n{link}"
+
+    media:
+      - bluesky
+      - mastodon
+      - matrix
+      - slack
+
+    mentions:
+      bluesky:
+        - galaxyproject.bsky.social
+      mastodon:
+        - galaxyfreiburg@bawü.social
+
+    hashtags:
+      bluesky:
+        - usegalaxy
+      mastodon:
+        - usegalaxy
