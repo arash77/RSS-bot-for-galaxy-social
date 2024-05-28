@@ -1,4 +1,4 @@
 feedparser
 PyYAML
 BeautifulSoup4
-github
+PyGithub
