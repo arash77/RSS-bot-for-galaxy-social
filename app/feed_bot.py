@@ -18,7 +18,7 @@ class feed_bot:
         except FileNotFoundError:
             raise FileNotFoundError(f"File {feed_file} not found")
 
-        access_token = os.environ.get("GITHUB_TOKEN")
+        access_token = os.environ.get("GALAXY_SOCIAL_BOT_TOKEN")
         g = Github(access_token)
         repo_name = os.environ.get("REPO")
         self.repo = g.get_repo(repo_name)
