@@ -26,6 +26,6 @@ jobs:
 
       - name: Run python script
         env:
-          FEED_FILE: "feeds.yml"
+          FEED_FILE: "app/feeds.yml"
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: python -u app/feed_bot.py

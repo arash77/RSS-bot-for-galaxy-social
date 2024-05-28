@@ -10,7 +10,7 @@ from github import Github
 
 class feed_bot:
     def __init__(self):
-        feed_file = os.path.join("app", os.environ.get("FEED_FILE", "feeds.yml"))
+        feed_file = os.environ.get("FEED_FILE", "app/feeds.yml")
         try:
             with open(feed_file, "r") as file:
                 self.configs = yaml.safe_load(file)
