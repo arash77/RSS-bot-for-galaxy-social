@@ -20,7 +20,7 @@ class feed_bot:
 
         access_token = os.environ.get("GITHUB_TOKEN")
         g = Github(access_token)
-        repo_name = os.environ.get("REPO", "arash77/galaxy-social")
+        repo_name = os.environ.get("REPO")
         self.repo = g.get_repo(repo_name)
 
         self.feed_bot_path = "posts/feed_bot"

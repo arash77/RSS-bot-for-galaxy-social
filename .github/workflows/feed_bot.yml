@@ -29,5 +29,6 @@ jobs:
       - name: Run python script
         env:
           FEED_FILE: "app/feeds.yml"
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GALAXY_SOCIAL_BOT_TOKEN }}
+          REPO: "arash77/galaxy-social"
         run: python -u app/feed_bot.py
