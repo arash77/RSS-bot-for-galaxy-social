@@ -25,12 +25,12 @@ class feed_bot:
 
         self.feed_bot_path = "posts/feed_bot"
 
-        # self.existing_files = set(
-        #     pr_file.filename
-        #     for pr in self.repo.get_pulls(state="all")
-        #     for pr_file in pr.get_files()
-        #     if pr_file.filename.startswith(self.feed_bot_path)
-        # )
+        self.existing_files = set(
+            pr_file.filename
+            for pr in self.repo.get_pulls(state="all")
+            for pr_file in pr.get_files()
+            if pr_file.filename.startswith(self.feed_bot_path)
+        )
 
     def create_pr(self):
         branch_name = f"feed-update-{datetime.now().strftime('%Y%m%d%H%M%S')}"
@@ -59,9 +59,9 @@ class feed_bot:
                 sub_folder = entry.link.split("/")[-1] or entry.link.split("/")[-2]
                 file_path = f"{self.feed_bot_path}/{folder}/{sub_folder}.md"
 
-                # if file_path in self.existing_files:
-                #     print(f"File {file_path} already exists")
-                #     continue
+                if file_path in self.existing_files:
+                    print(f"File {file_path} already exists")
+                    continue
 
                 if entry.link is None:
                     print(f"No link found for entry {entry.title}")
