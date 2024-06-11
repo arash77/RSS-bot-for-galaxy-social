@@ -67,9 +67,12 @@ class feed_bot:
             )
             folder = feed_data.feed.title.replace(" ", "_").lower()
             for entry in feed_data.entries:
-                published_date = datetime.strptime(
-                    entry.published, "%Y-%m-%dT%H:%M:%S.%fZ"
+                date = (
+                    entry.get("published")
+                    or entry.get("pubDate")
+                    or entry.get("updated")
                 )
+                published_date = datetime.strptime(date, "%Y-%m-%dT%H:%M:%S.%fZ")
                 if start_date and published_date >= start_date:
                     print(f"Skipping entry {entry.title} as it is older")
                     continue
