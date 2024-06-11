@@ -27,9 +27,15 @@ class feed_bot:
 
         self.existing_files = set(
             pr_file.filename
-            for pr in self.repo.get_pulls(state="all")
+            for pr in self.repo.get_pulls(state="open")
             for pr_file in pr.get_files()
             if pr_file.filename.startswith(self.feed_bot_path)
+        )
+        git_tree = self.repo.get_git_tree(self.repo.default_branch, recursive=True)
+        self.existing_files.update(
+            file.path
+            for file in git_tree.tree
+            if file.path.startswith(self.feed_bot_path) and file.path.endswith(".md")
         )
 
     def create_pr(self):
