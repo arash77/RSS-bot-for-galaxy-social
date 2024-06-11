@@ -5,7 +5,7 @@ from datetime import datetime
 import feedparser
 import yaml
 from bs4 import BeautifulSoup
-from github import Github
+from github import Github, GithubException
 
 
 class feed_bot:
@@ -79,11 +79,11 @@ class feed_bot:
                 file_path = f"{self.feed_bot_path}/{folder}/{file_name}.md"
 
                 if start_date and published_date < start_date:
-                    print(f"Skipping {file_name} as it is older.")
+                    print(f"Skipping as it is older: {file_name}")
                     continue
 
                 if file_path in self.existing_files:
-                    print(f"File {file_path} already exists.")
+                    print(f"Skipping as file already exists: {file_path} ")
                     continue
 
                 if entry.link is None:
@@ -138,9 +138,9 @@ class feed_bot:
                 base="main",
                 head=branch_name,
             )
-        except Exception as e:
+        except GithubException as e:
             self.repo.get_git_ref(f"heads/{branch_name}").delete()
-            print(f"Error in creating PR: {e.get('errors')[0].get('message')}")
+            print(f"Error in creating PR: {e.data.get('errors')[0].get('message')}")
 
 
 if __name__ == "__main__":
