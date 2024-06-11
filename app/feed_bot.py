@@ -66,6 +66,7 @@ class feed_bot:
                 else None
             )
             folder = feed_data.feed.title.replace(" ", "_").lower()
+            feeds_processed = []
             for entry in feed_data.entries:
                 date = (
                     entry.get("published")
@@ -124,10 +125,15 @@ class feed_bot:
                     branch=branch_name,
                 )
 
+                feeds_processed.append(entry.title)
+
         try:
+            title = f"Update from feeds {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
+            feeds_processed_str = "- " + "\n- ".join(feeds_processed)
+            body = f"This PR created automatically by feed bot.\n\nFeeds processed:\n{feeds_processed_str}"
             self.repo.create_pull(
-                title="Update from feeds",
-                body="This PR created automatically by feed bot.",
+                title=title,
+                body=body,
                 base="main",
                 head=branch_name,
             )
