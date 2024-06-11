@@ -73,7 +73,7 @@ class feed_bot:
                     or entry.get("updated")
                 )
                 published_date = datetime.strptime(date, "%Y-%m-%dT%H:%M:%S.%fZ")
-                if start_date and published_date >= start_date:
+                if start_date and published_date < start_date:
                     print(f"Skipping entry {entry.title} as it is older")
                     continue
 
