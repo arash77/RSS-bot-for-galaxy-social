@@ -74,15 +74,16 @@ class feed_bot:
                     or entry.get("updated")
                 )
                 published_date = datetime.strptime(date, "%Y-%m-%dT%H:%M:%S.%fZ")
+
+                file_name = entry.link.split("/")[-1] or entry.link.split("/")[-2]
+                file_path = f"{self.feed_bot_path}/{folder}/{file_name}.md"
+
                 if start_date and published_date < start_date:
-                    print(f"Skipping entry {entry.title} as it is older")
+                    print(f"Skipping {file_name} as it is older.")
                     continue
 
-                sub_folder = entry.link.split("/")[-1] or entry.link.split("/")[-2]
-                file_path = f"{self.feed_bot_path}/{folder}/{sub_folder}.md"
-
                 if file_path in self.existing_files:
-                    print(f"File {file_path} already exists")
+                    print(f"File {file_path} already exists.")
                     continue
 
                 if entry.link is None:
@@ -139,7 +140,7 @@ class feed_bot:
             )
         except Exception as e:
             self.repo.get_git_ref(f"heads/{branch_name}").delete()
-            print(f"Error in creating PR: {e}")
+            print(f"Error in creating PR: {e.get('errors')[0].get('message')}")
 
 
 if __name__ == "__main__":
