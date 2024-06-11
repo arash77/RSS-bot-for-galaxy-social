@@ -10,7 +10,7 @@ from github import Github
 
 class feed_bot:
     def __init__(self):
-        feed_file = os.environ.get("FEED_FILE", "app/feeds.yml")
+        feed_file = os.environ.get("FEED_FILE")
         try:
             with open(feed_file, "r") as file:
                 self.configs = yaml.safe_load(file)
@@ -60,8 +60,20 @@ class feed_bot:
             except Exception as e:
                 print(f"Error in parsing feed {feed.get('url')}: {e}")
                 continue
+            start_date = (
+                datetime.strptime(feed.get("start_date"), "%Y-%m-%d")
+                if feed.get("start_date")
+                else None
+            )
             folder = feed_data.feed.title.replace(" ", "_").lower()
             for entry in feed_data.entries:
+                published_date = datetime.strptime(
+                    entry.published, "%Y-%m-%dT%H:%M:%S.%fZ"
+                )
+                if start_date and published_date >= start_date:
+                    print(f"Skipping entry {entry.title} as it is older")
+                    continue
+
                 sub_folder = entry.link.split("/")[-1] or entry.link.split("/")[-2]
                 file_path = f"{self.feed_bot_path}/{folder}/{sub_folder}.md"
 
