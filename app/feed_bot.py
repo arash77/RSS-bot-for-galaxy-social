@@ -87,8 +87,10 @@ class feed_bot:
                     continue
 
                 if entry.link is None:
-                    print(f"No link found for entry {entry.title}")
+                    print(f"No link found: {file_name}")
                     continue
+
+                print(f"Processing {file_name}")
 
                 md_config = yaml.dump(
                     {
