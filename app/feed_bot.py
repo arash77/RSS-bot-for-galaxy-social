@@ -132,9 +132,8 @@ class feed_bot:
                 feeds_processed.append(entry.title)
 
         try:
-            now_str = now.strftime("%Y-%m-%d %H:%M")
             yesterday_str = yesterday.strftime("%Y-%m-%d %H:%M")
-            title = f"Update from feeds (from {yesterday_str} until {now_str}"
+            title = f"Update from feeds input bot since {yesterday_str}"
             feeds_processed_str = "- " + "\n- ".join(feeds_processed)
             body = f"This PR created automatically by feed bot.\n\nFeeds processed:\n{feeds_processed_str}"
             self.repo.create_pull(
