@@ -1,6 +1,6 @@
 import os
 import re
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import feedparser
 import yaml
@@ -60,25 +60,24 @@ class feed_bot:
             except Exception as e:
                 print(f"Error in parsing feed {feed.get('url')}: {e}")
                 continue
-            start_date = (
-                datetime.strptime(feed.get("start_date"), "%Y-%m-%d")
-                if feed.get("start_date")
-                else None
-            )
+
             folder = feed_data.feed.title.replace(" ", "_").lower()
             feeds_processed = []
             for entry in feed_data.entries:
-                date = (
+                date_entry = (
                     entry.get("published")
                     or entry.get("pubDate")
                     or entry.get("updated")
                 )
-                published_date = datetime.strptime(date, "%Y-%m-%dT%H:%M:%S.%fZ")
+                published_date = datetime.strptime(
+                    date_entry, "%Y-%m-%dT%H:%M:%S.%fZ"
+                ).date()
+                yesterday = datetime.now().date() - timedelta(days=1)
 
                 file_name = entry.link.split("/")[-1] or entry.link.split("/")[-2]
                 file_path = f"{self.feed_bot_path}/{folder}/{file_name}.md"
 
-                if start_date and published_date < start_date:
+                if published_date < yesterday:
                     print(f"Skipping as it is older: {file_name}")
                     continue
 
@@ -131,7 +130,11 @@ class feed_bot:
                 feeds_processed.append(entry.title)
 
         try:
-            title = f"Update from feeds {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
+            now = datetime.now().strftime("%Y-%m-%d %H:%M")
+            yesterday = (datetime.now().date() - timedelta(days=1)).strftime(
+                "%Y-%m-%d %H:%M"
+            )
+            title = f"Update from feeds (from {yesterday} until {now}"
             feeds_processed_str = "- " + "\n- ".join(feeds_processed)
             body = f"This PR created automatically by feed bot.\n\nFeeds processed:\n{feeds_processed_str}"
             self.repo.create_pull(

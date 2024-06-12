@@ -1,6 +1,6 @@
 feeds:
   - url: https://galaxyproject.org/eu/feed.atom
-    start_date: "2024-06-01"
+
     format: "{summary}\n\n{link}"
 
     media:
