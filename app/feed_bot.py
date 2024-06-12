@@ -132,8 +132,9 @@ class feed_bot:
                 feeds_processed.append(entry.title)
 
         try:
-            yesterday_str = yesterday.strftime("%Y-%m-%d %H:%M")
-            title = f"Update from feeds input bot since {yesterday_str}"
+            title = (
+                f"Update from feeds input bot since {yesterday.strftime('%Y-%m-%d')}"
+            )
             feeds_processed_str = "- " + "\n- ".join(feeds_processed)
             body = f"This PR created automatically by feed bot.\n\nFeeds processed:\n{feeds_processed_str}"
             self.repo.create_pull(
@@ -144,7 +145,9 @@ class feed_bot:
             )
         except GithubException as e:
             self.repo.get_git_ref(f"heads/{branch_name}").delete()
-            print(f"Error in creating PR: {e.data.get('errors')[0].get('message')}")
+            print(
+                f"Error in creating PR: {e.data.get('errors')[0].get('message')}\nRemoving branch {branch_name}"
+            )
 
 
 if __name__ == "__main__":
