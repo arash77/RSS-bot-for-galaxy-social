@@ -39,7 +39,10 @@ class feed_bot:
         )
 
     def create_pr(self):
-        branch_name = f"feed-update-{datetime.now().strftime('%Y%m%d%H%M%S')}"
+        now = datetime.now()
+        yesterday = now.date() - timedelta(days=1)
+
+        branch_name = f"feed-update-{now.strftime('%Y%m%d%H%M%S')}"
         self.repo.create_git_ref(
             ref=f"refs/heads/{branch_name}",
             sha=self.repo.get_branch("main").commit.sha,
@@ -72,7 +75,6 @@ class feed_bot:
                 published_date = datetime.strptime(
                     date_entry, "%Y-%m-%dT%H:%M:%S.%fZ"
                 ).date()
-                yesterday = datetime.now().date() - timedelta(days=1)
 
                 file_name = entry.link.split("/")[-1] or entry.link.split("/")[-2]
                 file_path = f"{self.feed_bot_path}/{folder}/{file_name}.md"
@@ -130,11 +132,9 @@ class feed_bot:
                 feeds_processed.append(entry.title)
 
         try:
-            now = datetime.now().strftime("%Y-%m-%d %H:%M")
-            yesterday = (datetime.now().date() - timedelta(days=1)).strftime(
-                "%Y-%m-%d %H:%M"
-            )
-            title = f"Update from feeds (from {yesterday} until {now}"
+            now_str = now.strftime("%Y-%m-%d %H:%M")
+            yesterday_str = yesterday.strftime("%Y-%m-%d %H:%M")
+            title = f"Update from feeds (from {yesterday_str} until {now_str}"
             feeds_processed_str = "- " + "\n- ".join(feeds_processed)
             body = f"This PR created automatically by feed bot.\n\nFeeds processed:\n{feeds_processed_str}"
             self.repo.create_pull(
