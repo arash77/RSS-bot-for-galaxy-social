@@ -32,10 +32,13 @@ jobs:
         with:
           app-id: ${{ vars.APP_ID }}
           private-key: ${{ secrets.APP_PRIVATE_KEY }}
+          owner: "arash77"
+          repositories: "galaxy-social-main"
+
 
       - name: Run python script
         env:
           FEED_FILE: "app/feeds.yml"
           GALAXY_SOCIAL_BOT_TOKEN: ${{ steps.generate-token.outputs.token }}
-          REPO: "arash77/galaxy-social"
+          REPO: "arash77/galaxy-social-main"
         run: python -u app/feed_bot.py
