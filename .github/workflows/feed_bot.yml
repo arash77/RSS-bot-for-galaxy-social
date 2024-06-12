@@ -26,9 +26,16 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install -r requirements.txt
 
+      - name: Generate a token
+        id: generate-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ vars.APP_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+
       - name: Run python script
         env:
           FEED_FILE: "app/feeds.yml"
-          GALAXY_SOCIAL_BOT_TOKEN: ${{ secrets.GALAXY_SOCIAL_BOT_TOKEN }}
+          GALAXY_SOCIAL_BOT_TOKEN: ${{ steps.generate-token.outputs.token }}
           REPO: "arash77/galaxy-social"
         run: python -u app/feed_bot.py
