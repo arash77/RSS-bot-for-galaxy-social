@@ -136,7 +136,7 @@ class youtube_bot:
 
                 self.repo.create_file(
                     path=file_path,
-                    message=f"Add {entry.title} to feed",
+                    message=f"Add {entry.title}",
                     content=md_content,
                     branch=branch_name,
                 )
@@ -145,10 +145,10 @@ class youtube_bot:
 
         try:
             title = (
-                f"Update from feeds input bot since {yesterday.strftime('%Y-%m-%d')}"
+                f"Update from Youtube input bot since {yesterday.strftime('%Y-%m-%d')}"
             )
             feeds_processed_str = "- " + "\n- ".join(feeds_processed)
-            body = f"This PR created automatically by feed bot.\n\nFeeds processed:\n{feeds_processed_str}"
+            body = f"This PR created automatically by youtube bot.\n\Youtube videos processed:\n{feeds_processed_str}"
             self.repo.create_pull(
                 title=title,
                 body=body,
