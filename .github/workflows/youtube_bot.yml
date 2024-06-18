@@ -1,4 +1,4 @@
-name: Create pr for feeds
+name: Create pr for youtube videos
 
 on:
   schedule:
@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  feed-bot:
+  youtube-bot:
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -38,7 +38,8 @@ jobs:
 
       - name: Run python script
         env:
-          FEED_CONFIG_FILE: "app/feeds_config.yml"
+          YOUTUBE_CONFIG_FILE: "app/youtube_config.yml"
           GALAXY_SOCIAL_BOT_TOKEN: ${{ steps.generate-token.outputs.token }}
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
           REPO: "arash77/galaxy-social-main"
-        run: python -u app/feed_bot.py
+        run: python -u app/youtube_bot.py

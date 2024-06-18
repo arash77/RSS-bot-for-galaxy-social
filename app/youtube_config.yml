@@ -1,0 +1,22 @@
+youtube:
+  - channel: "https://www.youtube.com/c/galaxyproject"
+
+    format: "{summary}\n\n{link}\n\n{media_thumbnail}"
+
+    media:
+      - bluesky
+      - mastodon
+      - matrix
+      - slack
+
+    mentions:
+      bluesky:
+        - galaxyproject.bsky.social
+      mastodon:
+        - galaxyfreiburg@bawü.social
+
+    hashtags:
+      bluesky:
+        - usegalaxy
+      mastodon:
+        - usegalaxy

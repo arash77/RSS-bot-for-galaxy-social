@@ -2,20 +2,21 @@ import os
 import re
 from datetime import datetime, timedelta
 
-import feedparser
 import yaml
 from bs4 import BeautifulSoup
 from github import Github, GithubException
+from pytube import Channel
+import feedparser
 
 
-class feed_bot:
+class youtube_bot:
     def __init__(self):
-        feed_config_file = os.environ.get("FEED_CONFIG_FILE")
+        youtube_config_file = os.environ.get("YOUTUBE_CONFIG_FILE")
         access_token = os.environ.get("GALAXY_SOCIAL_BOT_TOKEN")
         repo_name = os.environ.get("REPO")
-        self.feed_bot_path = os.environ.get("FEED_BOT_PATH", "posts/feed_bot")
+        self.youtube_bot_path = os.environ.get("YOUTUBE_BOT_PATH", "posts/youtube_bot")
 
-        with open(feed_config_file, "r") as file:
+        with open(youtube_config_file, "r") as file:
             self.configs = yaml.safe_load(file)
 
         g = Github(access_token)
@@ -25,39 +26,45 @@ class feed_bot:
             pr_file.filename
             for pr in self.repo.get_pulls(state="open")
             for pr_file in pr.get_files()
-            if pr_file.filename.startswith(self.feed_bot_path)
+            if pr_file.filename.startswith(self.youtube_bot_path)
         )
         git_tree = self.repo.get_git_tree(self.repo.default_branch, recursive=True)
         self.existing_files.update(
             file.path
             for file in git_tree.tree
-            if file.path.startswith(self.feed_bot_path) and file.path.endswith(".md")
+            if file.path.startswith(self.youtube_bot_path) and file.path.endswith(".md")
         )
 
     def create_pr(self):
         now = datetime.now()
         yesterday = now.date() - timedelta(days=1)
 
-        branch_name = f"feed-update-{now.strftime('%Y%m%d%H%M%S')}"
+        branch_name = f"youtube-update-{now.strftime('%Y%m%d%H%M%S')}"
         self.repo.create_git_ref(
             ref=f"refs/heads/{branch_name}",
             sha=self.repo.get_branch("main").commit.sha,
         )
 
-        feed_list = self.configs.get("feeds")
-        if feed_list is None:
-            raise ValueError("No feeds found in the file")
-        for feed in feed_list:
-            if feed.get("url") is None:
-                raise ValueError(f"No url found in the file for feed {feed}")
-            elif feed.get("media") is None:
-                raise ValueError(f"No media found in the file for feed {feed}")
-            elif feed.get("format") is None:
-                raise ValueError(f"No format found in the file for feed {feed}")
+        youtube_channel_list = self.configs.get("youtube")
+        if youtube_channel_list is None:
+            raise ValueError("No youtube channel found in the file")
+        for youtube_channel in youtube_channel_list:
+            if youtube_channel.get("channel") is None:
+                raise ValueError(
+                    f"No channel url found in the file for {youtube_channel}"
+                )
+            elif youtube_channel.get("media") is None:
+                raise ValueError(f"No media found in the file for {youtube_channel}")
+            elif youtube_channel.get("format") is None:
+                raise ValueError(f"No format found in the file for {youtube_channel}")
             try:
-                feed_data = feedparser.parse(feed.get("url"))
+                channel = Channel(youtube_channel.get("channel"))
+                feed_url = f"https://www.youtube.com/feeds/videos.xml?channel_id={channel.channel_id}"
+                feed_data = feedparser.parse(feed_url)
             except Exception as e:
-                print(f"Error in parsing feed {feed.get('url')}: {e}")
+                print(
+                    f"Error in parsing feed of {youtube_channel.get('channel')} youtube channel: {e}"
+                )
                 continue
 
             folder = feed_data.feed.title.replace(" ", "_").lower()
@@ -76,7 +83,10 @@ class feed_bot:
                 published_date = datetime.strptime(date_entry, date_str).date()
 
                 file_name = entry.link.split("/")[-1] or entry.link.split("/")[-2]
-                file_path = f"{self.feed_bot_path}/{folder}/{file_name}.md"
+                file_name = (
+                    file_name.split("?v=")[-1] if "?v=" in file_name else file_name
+                )
+                file_path = f"{self.youtube_bot_path}/{folder}/{file_name}.md"
 
                 if published_date < yesterday:
                     print(f"Skipping as it is older: {file_name}")
@@ -90,17 +100,16 @@ class feed_bot:
                     print(f"No link found: {file_name}")
                     continue
 
-                print(f"Processing {file_name}")
-
+                print(f"Processing: {file_name}")
                 md_config = yaml.dump(
                     {
-                        key: feed[key]
+                        key: youtube_channel[key]
                         for key in ["media", "mentions", "hashtags"]
-                        if key in feed
+                        if key in youtube_channel
                     }
                 )
 
-                format_string = feed.get("format")
+                format_string = youtube_channel.get("format")
                 placeholders = re.findall(r"{(.*?)}", format_string)
                 values = {}
                 for placeholder in placeholders:
@@ -110,6 +119,10 @@ class feed_bot:
                             first_paragraph = soup.find("p")
                             values[placeholder] = first_paragraph.get_text().replace(
                                 "\n", " "
+                            )
+                        elif placeholder == "media_thumbnail":
+                            values[placeholder] = (
+                                f'![{entry.title}]({entry.media_thumbnail[0]["url"]})'
                             )
                         else:
                             values[placeholder] = entry[placeholder]
@@ -142,6 +155,7 @@ class feed_bot:
                 base="main",
                 head=branch_name,
             )
+            print(f"PR created for {branch_name}")
         except GithubException as e:
             self.repo.get_git_ref(f"heads/{branch_name}").delete()
             print(
@@ -150,5 +164,5 @@ class feed_bot:
 
 
 if __name__ == "__main__":
-    feed_bot_cls = feed_bot()
-    feed_bot_cls.create_pr()
+    youtube_bot_cls = youtube_bot()
+    youtube_bot_cls.create_pr()
