@@ -37,7 +37,7 @@ class youtube_bot:
 
     def create_pr(self):
         now = datetime.now()
-        yesterday = now.date() - timedelta(days=1)
+        start_date = now.date() - timedelta(days=8)
 
         branch_name = f"youtube-update-{now.strftime('%Y%m%d%H%M%S')}"
         self.repo.create_git_ref(
@@ -88,7 +88,7 @@ class youtube_bot:
                 )
                 file_path = f"{self.youtube_bot_path}/{folder}/{file_name}.md"
 
-                if published_date < yesterday:
+                if published_date < start_date:
                     print(f"Skipping as it is older: {file_name}")
                     continue
 
@@ -145,7 +145,7 @@ class youtube_bot:
 
         try:
             title = (
-                f"Update from Youtube input bot since {yesterday.strftime('%Y-%m-%d')}"
+                f"Update from Youtube input bot since {start_date.strftime('%Y-%m-%d')}"
             )
             feeds_processed_str = "- " + "\n- ".join(feeds_processed)
             body = f"This PR created automatically by youtube bot.\n\Youtube videos processed:\n{feeds_processed_str}"
