@@ -1,7 +1,7 @@
 youtube:
   - channel: "https://www.youtube.com/c/galaxyproject"
 
-    format: "{summary}\n\n{link}\n\n{media_thumbnail}"
+    format: "{summary}\n\n{link}"
 
     media:
       - bluesky
