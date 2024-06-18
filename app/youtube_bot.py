@@ -37,7 +37,7 @@ class youtube_bot:
 
     def create_pr(self):
         now = datetime.now()
-        start_date = now.date() - timedelta(days=8)
+        start_date = now.date() - timedelta(days=1)
 
         branch_name = f"youtube-update-{now.strftime('%Y%m%d%H%M%S')}"
         self.repo.create_git_ref(
@@ -148,7 +148,7 @@ class youtube_bot:
                 f"Update from Youtube input bot since {start_date.strftime('%Y-%m-%d')}"
             )
             feeds_processed_str = "- " + "\n- ".join(feeds_processed)
-            body = f"This PR created automatically by youtube bot.\n\Youtube videos processed:\n{feeds_processed_str}"
+            body = f"This PR created automatically by youtube bot.\nYoutube videos processed:\n{feeds_processed_str}"
             self.repo.create_pull(
                 title=title,
                 body=body,
