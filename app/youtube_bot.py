@@ -37,7 +37,7 @@ class youtube_bot:
 
     def create_pr(self):
         now = datetime.now()
-        start_date = now.date() - timedelta(days=8)
+        start_date = now.date() - timedelta(days=1)
 
         branch_name = f"youtube-update-{now.strftime('%Y%m%d%H%M%S')}"
         self.repo.create_git_ref(
