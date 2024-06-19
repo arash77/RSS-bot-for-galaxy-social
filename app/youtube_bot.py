@@ -89,7 +89,7 @@ class youtube_bot:
                 file_path = f"{self.youtube_bot_path}/{folder}/{file_name}.md"
 
                 if published_date < start_date:
-                    print(f"Skipping as it is older: {file_name}")
+                    print(f"Skipping as it is older: {entry.link}")
                     continue
 
                 if file_path in self.existing_files:
