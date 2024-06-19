@@ -75,22 +75,24 @@ class feed_bot:
                 )
                 published_date = datetime.strptime(date_entry, date_str).date()
 
+                if entry.link is None:
+                    print(f"No link found: {entry.title}")
+                    continue
+
                 file_name = entry.link.split("/")[-1] or entry.link.split("/")[-2]
                 file_path = f"{self.feed_bot_path}/{folder}/{file_name}.md"
 
                 if published_date < start_date:
-                    print(f"Skipping as it is older: {file_name}")
+                    print(f"Skipping as it is older: {entry.link}")
                     continue
 
                 if file_path in self.existing_files:
-                    print(f"Skipping as file already exists: {file_path} ")
+                    print(
+                        f"Skipping as file already exists: {file_path} for {entry.link}"
+                    )
                     continue
 
-                if entry.link is None:
-                    print(f"No link found: {file_name}")
-                    continue
-
-                print(f"Processing {file_name}")
+                print(f"Processing {file_name} from {entry.link}")
 
                 md_config = yaml.dump(
                     {

@@ -82,6 +82,10 @@ class youtube_bot:
                 )
                 published_date = datetime.strptime(date_entry, date_str).date()
 
+                if entry.link is None:
+                    print(f"No link found: {entry.title}")
+                    continue
+
                 file_name = entry.link.split("/")[-1] or entry.link.split("/")[-2]
                 file_name = (
                     file_name.split("?v=")[-1] if "?v=" in file_name else file_name
@@ -93,14 +97,10 @@ class youtube_bot:
                     continue
 
                 if file_path in self.existing_files:
-                    print(f"Skipping as file already exists: {file_path} ")
+                    print(f"Skipping as file already exists: {entry.link}")
                     continue
 
-                if entry.link is None:
-                    print(f"No link found: {file_name}")
-                    continue
-
-                print(f"Processing: {file_name}")
+                print(f"Processing {entry.link}")
                 md_config = yaml.dump(
                     {
                         key: youtube_channel[key]
