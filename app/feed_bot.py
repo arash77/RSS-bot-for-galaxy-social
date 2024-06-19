@@ -130,6 +130,14 @@ class feed_bot:
 
                 feeds_processed.append(entry.title)
 
+        base_sha = self.repo.get_branch("main").commit.sha
+        compare_sha = self.repo.get_branch(branch_name).commit.sha
+        comparison = self.repo.compare(base_sha, compare_sha).total_commits
+        if comparison == 0:
+            self.repo.get_git_ref(f"heads/{branch_name}").delete()
+            print(f"No new feed found.\nRemoving branch {branch_name}")
+            return
+
         try:
             title = (
                 f"Update from feeds input bot since {start_date.strftime('%Y-%m-%d')}"
