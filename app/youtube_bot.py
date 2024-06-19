@@ -149,13 +149,13 @@ class youtube_bot:
             )
             feeds_processed_str = "- " + "\n- ".join(feeds_processed)
             body = f"This PR created automatically by youtube bot.\nYoutube videos processed:\n{feeds_processed_str}"
-            self.repo.create_pull(
+            pr = self.repo.create_pull(
                 title=title,
                 body=body,
                 base="main",
                 head=branch_name,
             )
-            print(f"PR created for {branch_name}")
+            print(f"PR created for {branch_name}\nPR link: {pr.html_url}")
         except GithubException as e:
             self.repo.get_git_ref(f"heads/{branch_name}").delete()
             print(
