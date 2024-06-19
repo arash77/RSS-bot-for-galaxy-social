@@ -1,4 +1,4 @@
-name: Create pr for youtube videos
+name: Create PR for youtube videos
 
 on:
   schedule:

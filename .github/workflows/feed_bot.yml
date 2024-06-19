@@ -1,4 +1,4 @@
-name: Create pr for feeds
+name: Create PR for RSS/Atom feeds
 
 on:
   schedule:
