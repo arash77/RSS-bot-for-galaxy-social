@@ -1,7 +1,7 @@
 youtube:
   - channel: "https://www.youtube.com/c/galaxyproject"
 
-    format: "🎥 New YouTube Video Released!/n/n{title}/n/n🔗 Watch it now: {link}"
+    format: "🎥 New YouTube Video Released!\n\n{title}\n\n🔗 Watch it now: {link}"
 
     media:
       - bluesky
