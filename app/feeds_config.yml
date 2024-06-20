@@ -20,3 +20,25 @@ feeds:
         - usegalaxy
       mastodon:
         - usegalaxy
+
+  - url: https://api.zotero.org/groups/1732893/items/top?format=atom&amp;qmode=titlecreatoryear&amp;sort=date&tag=>usegalaxy.eu
+    
+    format: "{summary}\n\n{link}"
+
+    media:
+      - bluesky
+      - mastodon
+      - matrix
+      - slack
+
+    mentions:
+      bluesky:
+        - galaxyproject.bsky.social
+      mastodon:
+        - galaxyfreiburg@bawü.social
+
+    hashtags:
+      bluesky:
+        - usegalaxy
+      mastodon:
+        - usegalaxy
