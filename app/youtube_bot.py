@@ -2,11 +2,12 @@ import os
 import re
 from datetime import datetime, timedelta
 
+import feedparser
 import yaml
 from bs4 import BeautifulSoup
+from dateutil import parser
 from github import Github, GithubException
 from pytube import Channel
-import feedparser
 
 
 class youtube_bot:
@@ -75,12 +76,7 @@ class youtube_bot:
                     or entry.get("pubDate")
                     or entry.get("updated")
                 )
-                date_str = (
-                    "%Y-%m-%dT%H:%M:%S.%fZ"
-                    if "." in date_entry
-                    else "%Y-%m-%dT%H:%M:%S%z"
-                )
-                published_date = datetime.strptime(date_entry, date_str).date()
+                published_date = parser.isoparse(date_entry).date()
 
                 if entry.link is None:
                     print(f"No link found: {entry.title}")
