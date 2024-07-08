@@ -1,10 +1,8 @@
 import os
-import re
-from datetime import datetime, timedelta
 
 from dateutil import parser
-from github import Github
 from pyzotero import zotero
+from utils import utils
 
 
 def check_new_citations(items):
@@ -24,12 +22,6 @@ def check_new_citations(items):
     return "\n".join(formatted_citations)
 
 
-def create_markdown_file(citations):
-    content = f"# New Citations\n\nNew citations have been found. Here are the details:\n\n{citations}"
-    with open("new_citations.md", "w") as f:
-        f.write(content)
-
-
 def create_pull_request(repo, branch_name, commit_message, pr_title, pr_body):
     main_branch = repo.get_branch("main")
     repo.create_git_ref(f"refs/heads/{branch_name}", main_branch.commit.sha)
@@ -41,43 +33,42 @@ def create_pull_request(repo, branch_name, commit_message, pr_title, pr_body):
 
 
 def main():
-    zot = zotero.Zotero("1732893", "group")
-    zot.add_parameters(
-        tag=">UseGalaxy.eu || >RNA Workbench || RNA workbench || >ASaiM || >Live EU || >Proteomics EU || >Metagenomics EU || >ML Workbench || >ChemicalToolbox",
-    )
+    citation_bot_path = os.environ.get("CITATION_BOT_PATH", "posts/feed_bot")
+    utils_obj = utils(citation_bot_path, "citations")
 
-    last_check = os.environ.get("LAST_CHECK_DATE")
-    if last_check:
-        last_check = parser.isoparse(last_check)
-    else:
-        last_check = datetime.now() - timedelta(days=7)
+    for citation in utils_obj.list:
+        if citation.get("zotero_group_id") is None:
+            raise ValueError(
+                f"No zotero group id found in the file for citation {citation}"
+            )
+        try:
+            zot = zotero.Zotero(citation.get("zotero_group_id"), "group")
+            if citation.get("tag"):
+                zot.add_parameters(tag=citation.get("tag"))
+            items = zot.everything(zot.top())
+        except Exception as e:
+            print(
+                f"Error in connecting to zotero group {citation.get('zotero_group_id')}: {e}"
+            )
+            continue
 
-    items = zot.everything(zot.top())
-    new_items = [
-        item
-        for item in items
-        if parser.isoparse(item["data"]["dateAdded"]).date() > last_check.date()
-    ]
-    if not new_items:
-        print("No new citations found.")
-        return
+        new_items = [
+            item
+            for item in items
+            if parser.isoparse(item["data"]["dateAdded"]).date() > utils_obj.start_date
+        ]
+        if not new_items:
+            print("No new citations found.")
+            return
+        
+        folder = zot.get_group(citation.get("zotero_group_id"))["data"]["name"]
+        # to be tested...
+        print(f"New citations found in {folder}")
 
-    new_citations = check_new_citations(new_items)
+        new_citations = check_new_citations(new_items)
 
-    create_markdown_file(new_citations)
-    # g = Github(os.environ["GITHUB_TOKEN"])
-    # repo = g.get_repo(os.environ["GITHUB_REPOSITORY"])
-    # branch_name = f"new-citations-{datetime.now().strftime('%Y%m%d-%H%M%S')}"
-    # commit_message = "Add new citations"
-    # pr_title = "New Citations Found"
-    # pr_body = "New citations have been detected by the automated system. Please review the changes and merge if appropriate."
-    # pr_url = create_pull_request(
-    #     repo, branch_name, commit_message, pr_title, pr_body
-    # )
-
-    # print(f"Pull request created: {pr_url}")
-    os.environ["LAST_CHECK_DATE"] = datetime.now().isoformat()
-
+        content = f"# New Citations\n\nNew citations have been found. Here are the details:\n\n{new_citations}"
+        # continue from here
 
 if __name__ == "__main__":
     main()

@@ -38,7 +38,6 @@ jobs:
 
       - name: Run python script
         env:
-          FEED_CONFIG_FILE: "app/feeds_config.yml"
           GALAXY_SOCIAL_BOT_TOKEN: ${{ steps.generate-token.outputs.token }}
           REPO: "arash77/galaxy-social-main"
         run: python -u app/feed_bot.py
