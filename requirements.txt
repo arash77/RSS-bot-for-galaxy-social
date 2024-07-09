@@ -4,3 +4,4 @@ BeautifulSoup4
 PyGithub
 pytube
 python-dateutil
+pyzotero
