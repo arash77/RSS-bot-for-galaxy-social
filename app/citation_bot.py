@@ -58,7 +58,7 @@ def main():
                 "formatted_text": formatted_text,
             }
             if utils_obj.process_entry(entry_data):
-                entry_processed.append(data["title"])
+                entry_processed.append(f"[{data['title']}]({data['DOI']})")
 
     title = f"Update from citation input bot since {utils_obj.start_date.strftime('%Y-%m-%d')}"
     entry_processed_str = "- " + "\n- ".join(entry_processed)
