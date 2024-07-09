@@ -11,7 +11,6 @@ def main():
     feed_bot_path = os.environ.get("FEED_BOT_PATH", "posts/feed_bot")
     utils_obj = utils(feed_bot_path, "feeds")
 
-    
     for feed in utils_obj.list:
         if feed.get("url") is None:
             raise ValueError(f"No url found in the file for feed {feed}")
@@ -60,9 +59,11 @@ def main():
                 "formatted_text": formatted_text,
             }
             if utils_obj.process_entry(entry_data):
-                feeds_processed.append(entry.title)
+                feeds_processed.append(f"[{entry.title}]({entry.link})")
 
-    title = f"Update from feeds input bot since {utils_obj.start_date.strftime('%Y-%m-%d')}"
+    title = (
+        f"Update from feeds input bot since {utils_obj.start_date.strftime('%Y-%m-%d')}"
+    )
     feeds_processed_str = "- " + "\n- ".join(feeds_processed)
     body = f"This PR created automatically by feed bot.\n\nFeeds processed:\n{feeds_processed_str}"
     utils_obj.create_pull_request(title, body)

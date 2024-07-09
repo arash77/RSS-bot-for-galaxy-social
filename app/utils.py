@@ -120,6 +120,6 @@ class utils:
         except GithubException as e:
             self.repo.get_git_ref(f"heads/{self.branch_name}").delete()
             print(
-                f"Error in creating PR: {e.data.get('errors')[0].get('message')}\nRemoving branch {branch_name}"
+                f"Error in creating PR: {e.data.get('errors')[0].get('message')}\nRemoving branch {self.branch_name}"
             )
             return False

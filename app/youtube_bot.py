@@ -69,7 +69,7 @@ def main():
                 "formatted_text": formatted_text,
             }
             if utils_obj.process_entry(entry_data):
-                feeds_processed.append(entry.title)
+                feeds_processed.append(f"[{entry.title}]({entry.link})")
 
     title = f"Update from Youtube input bot since {utils_obj.start_date.strftime('%Y-%m-%d')}"
     feeds_processed_str = "- " + "\n- ".join(feeds_processed)
