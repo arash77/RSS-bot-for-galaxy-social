@@ -57,9 +57,9 @@ def main():
                 parser.isoparse(data["dateAdded"]).date() if "dateAdded" in data else ""
             )
             formatted_text = format_string.format(**data)
-            
+
             entry_data = {
-                "title": item["title"],
+                "title": data["title"],
                 "config": citation,
                 "date": data["dateAdded"],
                 "rel_file_path": f"{folder}/{item['key']}.md",
