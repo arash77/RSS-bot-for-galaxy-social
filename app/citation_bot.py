@@ -5,16 +5,6 @@ from pyzotero import zotero
 from utils import utils
 
 
-def create_pull_request(repo, branch_name, commit_message, pr_title, pr_body):
-    main_branch = repo.get_branch("main")
-    repo.create_git_ref(f"refs/heads/{branch_name}", main_branch.commit.sha)
-    with open("new_citations.md", "r") as file:
-        content = file.read()
-    repo.create_file("new_citations.md", commit_message, content, branch=branch_name)
-    pr = repo.create_pull(title=pr_title, body=pr_body, head=branch_name, base="main")
-    return pr.html_url
-
-
 def main():
     citation_bot_path = os.environ.get("CITATION_BOT_PATH", "posts/citation_bot")
     utils_obj = utils(citation_bot_path, "citations")
@@ -58,10 +48,6 @@ def main():
             }
             if utils_obj.process_entry(entry_data):
                 entry_processed.append(data["title"])
-
-    if not entry_processed:
-        print("No new citation found.")
-        return
 
     title = f"Update from citation input bot since {utils_obj.start_date.strftime('%Y-%m-%d')}"
     entry_processed_str = "- " + "\n- ".join(entry_processed)
