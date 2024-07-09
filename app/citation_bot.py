@@ -36,7 +36,11 @@ def main():
                 data.get("title", "").encode("ASCII", "ignore").decode("ASCII")
             )
             data["creators"] = ", ".join(
-                f"{creator.get('lastName', '')}, {creator.get('firstName', '')[0]}."
+                (
+                    f"{creator.get('lastName', '')}, {creator.get('firstName', '')[0]}."
+                    if creator.get("firstName") is not None
+                    else f"{creator.get('lastName', '')}"
+                )
                 for creator in data.get("creators", [])[:3]
             ) + (", et. al." if len(data.get("creators", [])) > 3 else "")
 
