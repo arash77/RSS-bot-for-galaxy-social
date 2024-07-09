@@ -65,13 +65,13 @@ class utils:
     def process_entry(self, entry):
         title = entry.get("title")
         config = entry.get("config")
-        published_date = entry.get("published")
+        date = entry.get("date")
         rel_file_path = entry.get("rel_file_path")
         formatted_text = entry.get("formatted_text")
 
         file_path = f"{self.bot_path}/{rel_file_path}"
 
-        if published_date < self.start_date:
+        if date < self.start_date:
             print(f"Skipping as it is older: {title}")
             return False
 

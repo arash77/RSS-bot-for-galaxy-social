@@ -55,7 +55,7 @@ def main():
             entry_data = {
                 "title": entry.title,
                 "config": feed,
-                "published": published_date,
+                "date": published_date,
                 "rel_file_path": f"{folder}/{file_name}.md",
                 "formatted_text": formatted_text,
             }
