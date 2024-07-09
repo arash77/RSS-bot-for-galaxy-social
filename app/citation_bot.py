@@ -31,12 +31,19 @@ def main():
 
         for item in items:
             data = item["data"]
-            data["creators"] = ", ".join(
-                creator.get("lastName", "") for creator in data.get("creators", [])
+
+            data["title"] = (
+                data.get("title", "").encode("ASCII", "ignore").decode("ASCII")
             )
+            data["creators"] = ", ".join(
+                f"{creator.get('lastName', '')}, {creator.get('firstName', '')[0]}."
+                for creator in data.get("creators", [])[:3]
+            ) + (", et. al." if len(data.get("creators", [])) > 3 else "")
+
             data["dateAdded"] = (
                 parser.isoparse(data["dateAdded"]).date() if "dateAdded" in data else ""
             )
+            data["DOI"] = f"https://doi.org/{data['DOI']}" if "DOI" in data else ""
             formatted_text = format_string.format(**data)
 
             entry_data = {

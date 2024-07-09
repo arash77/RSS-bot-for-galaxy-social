@@ -50,7 +50,7 @@ citations:
 
     tag: ">UseGalaxy.eu || >RNA Workbench || RNA workbench || >ASaiM || >Live EU || >Proteomics EU || >Metagenomics EU || >ML Workbench || >ChemicalToolbox"
 
-    format: "📰 New publication Released!\n\n{title}\nBy: {creators}"
+    format: "📰 New publication Released!\n\n{title}\nBy: {creators}\n{DOI}"
 
     media:
       - bluesky
