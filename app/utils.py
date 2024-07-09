@@ -63,6 +63,7 @@ class utils:
         self.start_date = datetime.now().date() - timedelta(
             days=int(os.environ.get("DAYS", 1))
         )
+        print(f"Processing items since {self.start_date}")
 
     def process_entry(self, entry):
         title = entry.get("title")
