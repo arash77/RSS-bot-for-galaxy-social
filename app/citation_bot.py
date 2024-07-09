@@ -35,20 +35,11 @@ def main():
             )
             continue
 
-        new_items = [
-            item
-            for item in items
-            if parser.isoparse(item["data"]["dateAdded"]).date() > utils_obj.start_date
-        ]
-        if not new_items:
-            print("No new citations found.")
-            return
-
         folder = citation.get("zotero_group_id")
         format_string = citation.get("format")
         entry_processed = []
 
-        for item in new_items:
+        for item in items:
             data = item["data"]
             data["creators"] = ", ".join(
                 creator.get("lastName", "") for creator in data.get("creators", [])
