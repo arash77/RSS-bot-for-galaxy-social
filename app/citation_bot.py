@@ -47,11 +47,11 @@ def main():
         folder = citation.get("zotero_group_id")
         format_string = citation.get("format")
         entry_processed = []
-        
+
         for item in items:
             data = item["data"]
             data["creators"] = ", ".join(
-                creator.get("lastName") for creator in data.get("creators", [])
+                creator.get("lastName", "") for creator in data.get("creators", [])
             )
             data["dateAdded"] = (
                 parser.isoparse(data["dateAdded"]).date() if "dateAdded" in data else ""
@@ -72,9 +72,7 @@ def main():
         print("No new citation found.")
         return
 
-    title = (
-        f"Update from citation input bot since {utils_obj.start_date.strftime('%Y-%m-%d')}"
-    )
+    title = f"Update from citation input bot since {utils_obj.start_date.strftime('%Y-%m-%d')}"
     entry_processed_str = "- " + "\n- ".join(entry_processed)
     body = f"This PR created automatically by citation bot.\n\nCitations processed:\n{entry_processed_str}"
     utils_obj.create_pull_request(title, body)
