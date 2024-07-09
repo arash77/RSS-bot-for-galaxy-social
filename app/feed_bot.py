@@ -21,6 +21,8 @@ def main():
             continue
 
         folder = feed_data.feed.title.replace(" ", "_").lower()
+        format_string = feed.get("format")
+        placeholders = re.findall(r"{(.*?)}", format_string)
         feeds_processed = []
         for entry in feed_data.entries:
             date_entry = (
@@ -34,8 +36,6 @@ def main():
 
             file_name = entry.link.split("/")[-1] or entry.link.split("/")[-2]
 
-            format_string = feed.get("format")
-            placeholders = re.findall(r"{(.*?)}", format_string)
             values = {}
             for placeholder in placeholders:
                 if placeholder in entry:

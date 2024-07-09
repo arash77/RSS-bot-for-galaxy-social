@@ -5,23 +5,6 @@ from pyzotero import zotero
 from utils import utils
 
 
-def check_new_citations(items):
-    formatted_citations = []
-    format_string = "- {title} on {dateAdded}, By:{creators}"
-    for item in items:
-        data = item["data"]
-        data["creators"] = ", ".join(
-            creator.get("lastName") for creator in data.get("creators", [])
-        )
-        data["dateAdded"] = (
-            parser.isoparse(data["dateAdded"]).date() if "dateAdded" in data else ""
-        )
-        formatted_text = format_string.format(**data)
-        formatted_citations.append(formatted_text)
-
-    return "\n".join(formatted_citations)
-
-
 def create_pull_request(repo, branch_name, commit_message, pr_title, pr_body):
     main_branch = repo.get_branch("main")
     repo.create_git_ref(f"refs/heads/{branch_name}", main_branch.commit.sha)
@@ -33,7 +16,7 @@ def create_pull_request(repo, branch_name, commit_message, pr_title, pr_body):
 
 
 def main():
-    citation_bot_path = os.environ.get("CITATION_BOT_PATH", "posts/feed_bot")
+    citation_bot_path = os.environ.get("CITATION_BOT_PATH", "posts/citation_bot")
     utils_obj = utils(citation_bot_path, "citations")
 
     for citation in utils_obj.list:
@@ -60,15 +43,42 @@ def main():
         if not new_items:
             print("No new citations found.")
             return
+
+        folder = citation.get("zotero_group_id")
+        format_string = citation.get("format")
+        entry_processed = []
         
-        folder = zot.get_group(citation.get("zotero_group_id"))["data"]["name"]
-        # to be tested...
-        print(f"New citations found in {folder}")
+        for item in items:
+            data = item["data"]
+            data["creators"] = ", ".join(
+                creator.get("lastName") for creator in data.get("creators", [])
+            )
+            data["dateAdded"] = (
+                parser.isoparse(data["dateAdded"]).date() if "dateAdded" in data else ""
+            )
+            formatted_text = format_string.format(**data)
+            
+            entry_data = {
+                "title": item["title"],
+                "config": citation,
+                "date": data["dateAdded"],
+                "rel_file_path": f"{folder}/{item['key']}.md",
+                "formatted_text": formatted_text,
+            }
+            if utils_obj.process_entry(entry_data):
+                entry_processed.append(formatted_text)
 
-        new_citations = check_new_citations(new_items)
+    if not entry_processed:
+        print("No new citation found.")
+        return
 
-        content = f"# New Citations\n\nNew citations have been found. Here are the details:\n\n{new_citations}"
-        # continue from here
+    title = (
+        f"Update from citation input bot since {utils_obj.start_date.strftime('%Y-%m-%d')}"
+    )
+    entry_processed_str = "- " + "\n- ".join(entry_processed)
+    body = f"This PR created automatically by citation bot.\n\nCitations processed:\n{entry_processed_str}"
+    utils_obj.create_pull_request(title, body)
+
 
 if __name__ == "__main__":
     main()

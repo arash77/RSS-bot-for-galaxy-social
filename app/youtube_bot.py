@@ -26,6 +26,8 @@ def main():
             continue
 
         folder = feed_data.feed.title.replace(" ", "_").lower()
+        format_string = youtube_channel.get("format")
+        placeholders = re.findall(r"{(.*?)}", format_string)
         feeds_processed = []
         for entry in feed_data.entries:
             date_entry = (
@@ -40,8 +42,6 @@ def main():
             file_name = entry.link.split("/")[-1] or entry.link.split("/")[-2]
             file_name = file_name.split("?v=")[-1] if "?v=" in file_name else file_name
 
-            format_string = youtube_channel.get("format")
-            placeholders = re.findall(r"{(.*?)}", format_string)
             values = {}
             for placeholder in placeholders:
                 if placeholder in entry:
@@ -70,6 +70,10 @@ def main():
             }
             if utils_obj.process_entry(entry_data):
                 feeds_processed.append(f"[{entry.title}]({entry.link})")
+
+    if not feeds_processed:
+        print("No new youtube video found.")
+        return
 
     title = f"Update from Youtube input bot since {utils_obj.start_date.strftime('%Y-%m-%d')}"
     feeds_processed_str = "- " + "\n- ".join(feeds_processed)
