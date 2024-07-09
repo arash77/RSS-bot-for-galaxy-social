@@ -112,12 +112,13 @@ class utils:
             return False
 
         try:
-            self.repo.create_pull(
+            pr = self.repo.create_pull(
                 title=title,
                 body=body,
                 base="main",
                 head=self.branch_name,
             )
+            print(f"PR created: {pr.html_url}")
             return True
         except GithubException as e:
             self.repo.get_git_ref(f"heads/{self.branch_name}").delete()
