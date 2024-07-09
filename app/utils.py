@@ -61,7 +61,7 @@ class utils:
             sha=self.repo.get_branch("main").commit.sha,
         )
         self.start_date = datetime.now().date() - timedelta(
-            days=os.environ.get("DAYS", 1)
+            days=int(os.environ.get("DAYS", 1))
         )
 
     def process_entry(self, entry):
