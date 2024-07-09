@@ -1,4 +1,4 @@
-name: Create PR for RSS/Atom feeds
+name: Create PR for new citations
 
 on:
   schedule:
@@ -7,12 +7,12 @@ on:
   workflow_dispatch:
     inputs:
       days:
-        description: "Number of days before today to check for new feeds"
+        description: "Number of days before today to check for new citations"
         required: false
         default: "1"
 
 jobs:
-  feed-bot:
+  citation-bot:
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -45,4 +45,4 @@ jobs:
           GALAXY_SOCIAL_BOT_TOKEN: ${{ steps.generate-token.outputs.token }}
           REPO: "arash77/galaxy-social-main"
           DAYS: ${{ github.event.inputs.days || '1' }}
-        run: python -u app/feed_bot.py
+        run: python -u app/citation_bot.py
