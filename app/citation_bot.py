@@ -66,7 +66,7 @@ def main():
                 "formatted_text": formatted_text,
             }
             if utils_obj.process_entry(entry_data):
-                entry_processed.append(formatted_text)
+                entry_processed.append(data["title"])
 
     if not entry_processed:
         print("No new citation found.")
