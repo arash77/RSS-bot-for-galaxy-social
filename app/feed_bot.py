@@ -61,6 +61,10 @@ def main():
             if utils_obj.process_entry(entry_data):
                 feeds_processed.append(f"[{entry.title}]({entry.link})")
 
+    if not feeds_processed:
+        print("No new feeds found.")
+        return
+
     title = (
         f"Update from feeds input bot since {utils_obj.start_date.strftime('%Y-%m-%d')}"
     )
