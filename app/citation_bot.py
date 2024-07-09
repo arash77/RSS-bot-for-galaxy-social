@@ -48,7 +48,7 @@ def main():
         format_string = citation.get("format")
         entry_processed = []
 
-        for item in items:
+        for item in new_items:
             data = item["data"]
             data["creators"] = ", ".join(
                 creator.get("lastName", "") for creator in data.get("creators", [])
