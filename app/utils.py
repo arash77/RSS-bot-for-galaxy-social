@@ -60,7 +60,9 @@ class utils:
             ref=f"refs/heads/{self.branch_name}",
             sha=self.repo.get_branch("main").commit.sha,
         )
-        self.start_date = datetime.now().date() - timedelta(days=1)
+        self.start_date = datetime.now().date() - timedelta(
+            days=os.environ.get("DAYS", 1)
+        )
 
     def process_entry(self, entry):
         title = entry.get("title")

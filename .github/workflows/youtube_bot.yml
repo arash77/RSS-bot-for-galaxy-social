@@ -5,6 +5,11 @@ on:
     - cron: "00 00 * * *"
 
   workflow_dispatch:
+    inputs:
+      days:
+        description: "Number of days before today to check for new videos"
+        required: false
+        default: "1"
 
 jobs:
   youtube-bot:
@@ -35,9 +40,9 @@ jobs:
           owner: "arash77"
           repositories: "galaxy-social-main"
 
-
       - name: Run python script
         env:
           GALAXY_SOCIAL_BOT_TOKEN: ${{ steps.generate-token.outputs.token }}
           REPO: "arash77/galaxy-social-main"
+          DAYS: ${{ github.event.inputs.days }}
         run: python -u app/youtube_bot.py
