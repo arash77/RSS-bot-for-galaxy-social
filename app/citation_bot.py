@@ -7,7 +7,8 @@ from utils import utils
 
 def main():
     citation_bot_path = os.environ.get("CITATION_BOT_PATH", "posts/citation_bot")
-    utils_obj = utils(citation_bot_path, "citations")
+    config_name = "citations"
+    utils_obj = utils(citation_bot_path, config_name)
 
     for citation in utils_obj.list:
         if citation.get("zotero_group_id") is None:

@@ -9,7 +9,8 @@ from utils import utils
 
 def main():
     feed_bot_path = os.environ.get("FEED_BOT_PATH", "posts/feed_bot")
-    utils_obj = utils(feed_bot_path, "feeds")
+    config_name = "feeds"
+    utils_obj = utils(feed_bot_path, config_name)
 
     for feed in utils_obj.list:
         if feed.get("url") is None:

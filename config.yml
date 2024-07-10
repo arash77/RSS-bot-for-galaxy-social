@@ -21,7 +21,6 @@ feeds:
       mastodon:
         - usegalaxy
 
-
 youtube_channels:
   - channel: "https://www.youtube.com/c/galaxyproject"
 
@@ -71,4 +70,27 @@ citations:
       mastodon:
         - usegalaxy
       linkedin:
+        - usegalaxy
+
+tools:
+  - api_url: https://usegalaxy.eu
+  
+    format: "📰 New tool Released!\n{name}\n{description}\n{link}"
+
+    media:
+      - bluesky
+      - mastodon
+      - matrix
+      - slack
+
+    mentions:
+      bluesky:
+        - galaxyproject.bsky.social
+      mastodon:
+        - galaxyfreiburg@bawü.social
+
+    hashtags:
+      bluesky:
+        - usegalaxy
+      mastodon:
         - usegalaxy

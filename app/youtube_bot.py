@@ -10,7 +10,8 @@ from utils import utils
 
 def main():
     youtube_bot_path = os.environ.get("YOUTUBE_BOT_PATH", "posts/youtube_bot")
-    utils_obj = utils(youtube_bot_path, "youtube_channels")
+    config_name = "youtube_channels"
+    utils_obj = utils(youtube_bot_path, config_name)
 
     for youtube_channel in utils_obj.list:
         if youtube_channel.get("channel") is None:
