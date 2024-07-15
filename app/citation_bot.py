@@ -1,7 +1,7 @@
 import os
 
 from dateutil import parser
-from pyzotero import zotero
+from pyzotero import zotero, zotero_errors
 from utils import utils
 
 
@@ -21,7 +21,7 @@ def main():
                 zot.add_parameters(tag=citation.get("tag"))
             try:
                 items = zot.everything(zot.top())
-            except Exception as e:
+            except zotero_errors.HTTPError:
                 # try again
                 items = zot.everything(zot.top())
         except Exception as e:
