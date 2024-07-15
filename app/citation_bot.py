@@ -19,7 +19,11 @@ def main():
             zot = zotero.Zotero(citation.get("zotero_group_id"), "group")
             if citation.get("tag"):
                 zot.add_parameters(tag=citation.get("tag"))
-            items = zot.everything(zot.top())
+            try:
+                items = zot.everything(zot.top())
+            except Exception as e:
+                # try again
+                items = zot.everything(zot.top())
         except Exception as e:
             print(
                 f"Error in connecting to zotero group {citation.get('zotero_group_id')}: {e}"
