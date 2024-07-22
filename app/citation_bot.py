@@ -52,7 +52,6 @@ def main():
             data["dateAdded"] = (
                 parser.isoparse(data["dateAdded"]).date() if "dateAdded" in data else ""
             )
-            data["DOI"] = f"https://doi.org/{data['DOI']}" if "DOI" in data else ""
             formatted_text = format_string.format(**data)
 
             entry_data = {
@@ -63,7 +62,7 @@ def main():
                 "formatted_text": formatted_text,
             }
             if utils_obj.process_entry(entry_data):
-                entry_processed.append(f"[{data['title']}]({data['DOI']})")
+                entry_processed.append(f"[{data['title']}]({data['url']})")
 
     title = f"Update from citation input bot since {utils_obj.start_date.strftime('%Y-%m-%d')}"
     entry_processed_str = "- " + "\n- ".join(entry_processed)
