@@ -1,22 +1,37 @@
-name: Create PR for new citations
+name: Automated Galaxy Social PR Creation
 
 on:
   schedule:
     - cron: "00 00 * * *"
-
   workflow_dispatch:
     inputs:
       days:
-        description: "Number of days before today to check for new citations"
-        required: false
-        default: "2"
+        description: "Number of days before today to check for new feeds"
+        required: true
+        type: number
+        default: 5
+      scripts:
+        description: "Script to run"
+        required: true
+        default: "feed_bot.py"
+        type: choice
+        options:
+          - citation_bot.py
+          - feed_bot.py
+          - youtube_bot.py
 
 jobs:
-  citation-bot:
+  run-bots:
     runs-on: ubuntu-latest
     permissions:
       contents: write
       pull-requests: write
+    strategy:
+      matrix:
+        script:
+          - feed_bot.py
+          - citation_bot.py
+          - youtube_bot.py
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -40,9 +55,15 @@ jobs:
           owner: "arash77"
           repositories: "galaxy-social-main"
 
-      - name: Run python script
+      - name: Run bot script
         env:
           GALAXY_SOCIAL_BOT_TOKEN: ${{ steps.generate-token.outputs.token }}
           REPO: "arash77/galaxy-social-main"
-          DAYS: ${{ github.event.inputs.days || '2' }}
-        run: python -u app/citation_bot.py
+          DAYS: ${{ github.event.inputs.days || 5 }}
+        run: |
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            script="${{ github.event.inputs.scripts }}"
+          else
+            script="${{ matrix.script }}"
+          fi
+          python -u app/$script
