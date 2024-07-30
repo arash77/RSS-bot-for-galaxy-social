@@ -10,15 +10,6 @@ on:
         required: true
         type: number
         default: 5
-      scripts:
-        description: "Script to run"
-        required: true
-        default: "feed_bot.py"
-        type: choice
-        options:
-          - citation_bot.py
-          - feed_bot.py
-          - youtube_bot.py
 
 jobs:
   run-bots:
@@ -60,10 +51,4 @@ jobs:
           GALAXY_SOCIAL_BOT_TOKEN: ${{ steps.generate-token.outputs.token }}
           REPO: "arash77/galaxy-social-main"
           DAYS: ${{ github.event.inputs.days || 5 }}
-        run: |
-          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
-            script="${{ github.event.inputs.scripts }}"
-          else
-            script="${{ matrix.script }}"
-          fi
-          python -u app/$script
+        run: python -u app/${{ matrix.script }}
